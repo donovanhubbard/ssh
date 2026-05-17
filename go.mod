@@ -1,4 +1,4 @@
-module github.com/charmbracelet/ssh
+module github.com/donovanhubbard/ssh
 
 go 1.25
 

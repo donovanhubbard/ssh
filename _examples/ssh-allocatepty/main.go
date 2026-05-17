@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/charmbracelet/ssh"
+	"github.com/donovanhubbard/ssh"
 )
 
 func main() {
