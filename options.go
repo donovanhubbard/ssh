@@ -86,7 +86,7 @@ func WrapConn(fn ConnCallback) Option {
 // EnableProxyProtocol returns a functional option that sets EnableProxyProtocol on the server
 func EnableProxyProtocol() Option {
 	return func(srv *Server) error {
-		srv.enableProxyProtocol = true
+		srv.EnableProxyProtocol = true
 		return nil
 	}
 }
