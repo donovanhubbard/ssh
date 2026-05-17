@@ -68,6 +68,8 @@ type Server struct {
 	IdleTimeout time.Duration // connection timeout when no activity, none if empty
 	MaxTimeout  time.Duration // absolute connection timeout, none if empty
 
+	EnableProxyProtocol bool // Enable support for HA Proxy's and NGinx's PROXY protocol
+
 	// ChannelHandlers allow overriding the built-in session handlers or provide
 	// extensions to the protocol, such as tcpip forwarding. By default only the
 	// "session" handler is enabled.
@@ -88,8 +90,6 @@ type Server struct {
 	conns      map[*gossh.ServerConn]struct{}
 	connWg     sync.WaitGroup
 	doneChan   chan struct{}
-
-	enableProxyProtocol bool // Enable support for HA Proxy's and NGinx's PROXY protocol
 }
 
 func (srv *Server) ensureHostSigner() error {
@@ -276,7 +276,7 @@ func (srv *Server) Shutdown(ctx context.Context) error {
 //
 // Serve always returns a non-nil error.
 func (srv *Server) Serve(l net.Listener) error {
-	if srv.enableProxyProtocol {
+	if srv.EnableProxyProtocol {
 		_, ok := l.(*proxyproto.Listener)
 		if !ok {
 			l = &proxyproto.Listener{Listener: l}
