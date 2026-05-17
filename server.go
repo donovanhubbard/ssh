@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pires/go-proxyproto"
 	gossh "golang.org/x/crypto/ssh"
 )
 
@@ -76,6 +77,8 @@ type Server struct {
 	conns      map[*gossh.ServerConn]struct{}
 	connWg     sync.WaitGroup
 	doneChan   chan struct{}
+
+	enableProxyProtocol bool // Enable support for HA Proxy's and NGinx's PROXY protocol
 }
 
 func (srv *Server) ensureHostSigner() error {
@@ -235,6 +238,13 @@ func (srv *Server) Shutdown(ctx context.Context) error {
 //
 // Serve always returns a non-nil error.
 func (srv *Server) Serve(l net.Listener) error {
+	if srv.enableProxyProtocol {
+		_, ok := l.(*proxyproto.Listener)
+		if !ok {
+			l = &proxyproto.Listener{Listener: l}
+		}
+	}
+
 	srv.ensureHandlers()
 	defer l.Close()
 	if err := srv.ensureHostSigner(); err != nil {
